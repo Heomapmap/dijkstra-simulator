@@ -1,0 +1,54 @@
+/* ===== TABLET (≤ 1024px) ===== */
+@media (max-width: 1024px) {
+  .main-container {
+    grid-template-columns: 260px 1fr 280px;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  header h2 { font-size: .88rem; }
+}
+
+/* ===== SMALL TABLET / LANDSCAPE MOBILE (≤ 768px) ===== */
+@media (max-width: 768px) {
+  html, body { overflow: auto; }
+
+  #app { height: auto; min-height: 100vh; }
+
+  .main-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    overflow: visible;
+    height: auto;
+  }
+
+  #canvas-wrapper {
+    height: 55vw;
+    min-height: 280px;
+  }
+
+  .panel {
+    max-height: none;
+    overflow: visible;
+  }
+
+  #networkInput { height: 90px; }
+
+  .log-area { max-height: 150px; }
+
+  #routing-table-container { max-height: 200px; overflow-y: auto; }
+}
+
+/* ===== MOBILE PORTRAIT (≤ 480px) ===== */
+@media (max-width: 480px) {
+  header { padding: .5rem 1rem; }
+  header h2 { font-size: .78rem; }
+
+  .main-container { padding: 5px; gap: 5px; }
+
+  .btn { font-size: .78rem; padding: 8px; }
+
+  table th, table td { font-size: .72rem; padding: 5px 4px; }
+
+  #canvas-wrapper { height: 60vw; }
+}

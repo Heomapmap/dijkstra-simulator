@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mô phỏng Thuật toán Dijkstra</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <header>
+    <h2>Mô phỏng Thuật toán Dijkstra trong Định tuyến Mạng</h2>
+    <small>Môn: Mạng máy tính &amp; Truyền số liệu</small>
+  </header>
+
+  <!-- MAIN GRID -->
+  <div class="main-container">
+
+    <!-- ===== PANEL TRÁI ===== -->
+    <div class="panel" id="panel-left">
+      <h3>⚙️ Thiết lập Mạng</h3>
+
+      <div class="instruction">
+        <b>Click</b> vào canvas để thêm node<br>
+        <b>Shift + kéo</b> giữa 2 node để nối cạnh<br>
+        <b>Chuột phải</b> để xem tùy chọn (đặt nguồn, xóa…)<br>
+        <b>Kéo</b> node để di chuyển &nbsp;|&nbsp; <b>Double-click</b> để đổi tên
+      </div>
+
+      <div class="shortcut-hint">
+        <span><kbd>Del</kbd> Xóa node/cạnh hover</span>
+        <span><kbd>Esc</kbd> Đóng menu</span>
+        <span><kbd>Scroll</kbd> Zoom</span>
+        <span><kbd>Alt+kéo</kbd> Di chuyển bản đồ</span>
+      </div>
+
+      <span class="textarea-label">Nhập văn bản mạng</span>
+      <textarea id="networkInput"
+        placeholder="Ví dụ:&#10;PC1 Switch1 10&#10;R1 R2 5&#10;Server1"
+        spellcheck="false"></textarea>
+
+      <div class="controls">
+        <button id="btn-build"  class="btn btn-build"  onclick="buildFromText()">
+          📋 Cập nhật từ văn bản
+        </button>
+        <button id="btn-run"    class="btn btn-run"    onclick="runDijkstra()">
+          ▶ Chạy Dijkstra
+        </button>
+        <button id="btn-arrange" class="btn btn-step"  onclick="arrangeNodes()">
+          ⭕ Sắp xếp hình tròn
+        </button>
+        <button id="btn-reset"  class="btn btn-reset"  onclick="resetAll()">
+          🗑 Xóa toàn bộ
+        </button>
+      </div>
+
+      <!-- Tốc độ -->
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <span style="font-size:.75rem;color:var(--text-muted);">Tốc độ:</span>
+        <input id="speedInput" type="range" min="50" max="1500" value="400" step="50"
+               style="flex:1;accent-color:var(--primary);">
+        <span id="speedLabel" style="font-size:.75rem;width:36px;color:var(--text-muted);">400ms</span>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border);flex-shrink:0;">
+
+      <h3>📋 Log quá trình</h3>
+      <div id="log" class="log-area">Sẵn sàng...</div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#10b981"></div> Nguồn
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#f59e0b"></div> Đang xét
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#6366f1"></div> Đã thăm
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#ef4444"></div> Đường đi
+        </div>
+      </div>
+    </div>
+
+    <div class="resize-handle" id="resize-left"></div>
+
+    <!-- ===== CANVAS ===== -->
+    <div id="canvas-wrapper">
+      <canvas id="networkCanvas"></canvas>
+
+      <!-- Zoom controls -->
+      <div id="zoom-controls">
+        <button class="zoom-btn" onclick="window._canvasMgr && window._canvasMgr.zoomIn()"  title="Phóng to">＋</button>
+        <span id="zoom-level">100%</span>
+        <button class="zoom-btn" onclick="window._canvasMgr && window._canvasMgr.zoomOut()" title="Thu nhỏ">－</button>
+        <button class="zoom-btn" onclick="window._canvasMgr && window._canvasMgr.fitView()" title="Vừa màn hình">⊡</button>
+        <button class="zoom-btn" onclick="window._canvasMgr && window._canvasMgr.resetView()" title="Reset">↺</button>
+      </div>
+    </div>
+
+
+    <div class="resize-handle" id="resize-right"></div>
+
+    <!-- ===== PANEL PHẢI ===== -->
+    <div class="panel" id="panel-right">
+      <h3>📊 Bảng Định tuyến (Result)</h3>
+      <div id="routing-table-container">
+        <div class="empty-state">
+          Chưa có dữ liệu.<br>
+          Hãy chọn nút nguồn và nhấn <b>Chạy Dijkstra</b>.
+        </div>
+      </div>
+      <div id="final-path"></div>
+    </div>
+
+  </div><!-- /main-container -->
+</div><!-- /app -->
+
+<!-- Context Menu -->
+<div id="context-menu"></div>
+
+<!-- Tooltip -->
+<div id="tooltip"></div>
+
+<!-- Toast -->
+<div id="toast-container"></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
