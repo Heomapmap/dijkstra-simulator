@@ -4,7 +4,7 @@
 
 import { dist, distPointToSegment, clamp } from '../utils/helpers.js';
 
-const NODE_RADIUS  = 26;
+const NODE_RADIUS  = 40;  // px – bán kính node
 const EDGE_HIT     = 8;   // px – vùng click cạnh
 
 // Màu theo trạng thái node
@@ -453,12 +453,10 @@ export class CanvasManager {
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    if (isPath) {
-      ctx.shadowColor = EDGE_COLORS.path;
-      ctx.shadowBlur = 10 / this.zoom;
-    }
+    ctx.strokeStyle = isHover ? '#3b82f6' : color;
+    ctx.lineWidth   = state === 'path' ? 4 : isHover ? 3 : 2;
+    
+    //Xóa nốt cái shadow của edge
     ctx.stroke();
     ctx.restore();
 
@@ -483,11 +481,16 @@ export class CanvasManager {
     ctx.shadowColor = 'rgba(0,0,0,0.1)';
     ctx.shadowBlur = 4 / this.zoom;
     ctx.beginPath();
-    ctx.roundRect(mx + ox - bw / 2, my + oy - bh / 2, bw, bh, 5 / this.zoom);
+    //Bán kính của vòng tròn thể hiện trọng số ở đây, 15
+    ctx.arc(mx + ox, my + oy, 15, 0, Math.PI * 2);
     ctx.fill();
-    
-    ctx.fillStyle = isHover ? '#2563eb' : '#334155';
-    ctx.textAlign = 'center';
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle  = isHover ? '#2563eb' : '#334155';
+    //kích thước của font trọng số ở đây, 20px
+    ctx.font       = 'bold 20px Segoe UI';
+    ctx.textAlign  = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(weight, mx + ox, my + oy);
     ctx.restore();
@@ -512,33 +515,46 @@ export class CanvasManager {
     const colors = NODE_COLORS[stateKey] || NODE_COLORS.default;
     const r = NODE_RADIUS + (isHover ? 3 / this.zoom : 0);
 
-    ctx.save();
-    // Glow effect
-    ctx.shadowColor = colors.fill + '88';
-    ctx.shadowBlur = isHover ? 15 / this.zoom : 6 / this.zoom;
+    //Xóa cái shadow đi cho đỡ mờ
 
     ctx.beginPath();
     ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
     ctx.fillStyle = colors.fill;
     ctx.fill();
     ctx.strokeStyle = colors.stroke;
-    ctx.lineWidth = 2.5 / this.zoom;
+    ctx.lineWidth = 1;
     ctx.stroke();
     ctx.restore();
 
     // Label
     ctx.save();
-    ctx.fillStyle = colors.label;
-    const fontSize = (node.name.length > 4 ? 9 : 11) / this.zoom;
-    ctx.font = `bold ${fontSize}px Segoe UI`;
-    ctx.textAlign = 'center';
+    ctx.fillStyle   = colors.label;
+    ctx.font        = `bold ${node.name.length > 4 ? 20 : 22}px Segoe UI`;
+    ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(node.name, node.x, node.y);
     ctx.restore();
 
     // Distance Badge
     if (node.dist !== Infinity) {
-      this._drawDistanceBadge(node, r);
+      ctx.save();
+      ctx.fillStyle   = '#1e293b';
+      ctx.font        = 'bold 1px Segoe UI';
+      ctx.textAlign   = 'center';
+      ctx.textBaseline = 'middle';
+      // Badge nhỏ bên trên
+      const label = `d=${node.dist}`;
+      const lw = ctx.measureText(label).width + 10;
+      ctx.fillStyle = 'rgba(255,255,255,.9)';
+      ctx.beginPath();
+      ctx.roundRect(node.x - lw / 2, node.y - r - 16, lw, 14, 4);
+      ctx.fill();
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = '#1e293b';
+      ctx.fillText(label, node.x, node.y - r - 9);
+      ctx.restore();
     }
 
     // Vòng nhấp nháy cho Current Node
